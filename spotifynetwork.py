@@ -32,6 +32,7 @@ def main():
     betweenness_centrality = nx.betweenness_centrality(G)
     closeness_centrality = nx.closeness_centrality(G)
     eigenvector_centrality = nx.eigenvector_centrality(G, max_iter=1000, tol=1e-06)
+    clustering_coefficient = nx.clustering(G)
 
     # Calculate average metrics
     avg_degree = avg_metric(degree)
@@ -40,6 +41,7 @@ def main():
     avg_closeness_centrality = avg_metric(closeness_centrality)
     avg_eigenvector_centrality = avg_metric(eigenvector_centrality)
     avg_path_length = nx.average_shortest_path_length(G)
+    avg_clustering_coefficient = nx.average_clustering(G)
 
     # Calculate median metrics
     median_degree = median_metric(degree)
@@ -47,6 +49,7 @@ def main():
     median_betweenness_centrality = median_metric(betweenness_centrality)
     median_closeness_centrality = median_metric(closeness_centrality)
     median_eigenvector_centrality = median_metric(eigenvector_centrality)
+    median_clustering_coefficient = median_metric(clustering_coefficient)
 
     # Calculate max metrics
     max_degree = max_metric(degree)
@@ -54,6 +57,7 @@ def main():
     max_betweenness_centrality = max_metric(betweenness_centrality)
     max_closeness_centrality = max_metric(closeness_centrality)
     max_eigenvector_centrality = max_metric(eigenvector_centrality)
+    max_clustering_coefficient = max_metric(clustering_coefficient)
 
     # Calculate min metrics
     min_degree = min_metric(degree)
@@ -61,6 +65,7 @@ def main():
     min_betweenness_centrality = min_metric(betweenness_centrality)
     min_closeness_centrality = min_metric(closeness_centrality)
     min_eigenvector_centrality = min_metric(eigenvector_centrality)
+    min_clustering_coefficient = min_metric(clustering_coefficient)
 
     # Iterate over the nodes in the network
     for node in G.nodes():
@@ -85,6 +90,7 @@ def main():
         print(f"Betweenness Centrality: {betweenness_centrality[node]}")
         print(f"Closeness Centrality: {closeness_centrality[node]}")
         print(f"Eigenvector Centrality: {eigenvector_centrality[node]}")
+        print(f"Clustering Coefficient: {clustering_coefficient[node]}")
         print("---")
 
     # Print the metrics
@@ -118,6 +124,12 @@ def main():
     print("Median eigenvector centrality:", median_eigenvector_centrality)
     print("---")
 
+    print("Max clustering coefficient:", max_clustering_coefficient, "Node:", max(clustering_coefficient, key=clustering_coefficient.get), "Song Name:", song_info[max(clustering_coefficient, key=clustering_coefficient.get)]['song_name'])
+    print("Min clustering coefficient:", min_clustering_coefficient, "Node:", min(clustering_coefficient, key=clustering_coefficient.get), "Song Name:", song_info[min(clustering_coefficient, key=clustering_coefficient.get)]['song_name'])
+    print("Average clustering coefficient:", avg_clustering_coefficient)
+    print("Median clustering coefficient:", median_clustering_coefficient)
+    print("---")
+
     print("Average path length:", avg_path_length) 
     print("---")
 
@@ -130,7 +142,7 @@ def main():
     largest_node = max(degree, key=degree.get)
     labels[largest_node] = song_info[largest_node]['song_name']
 
-    pos = nx.spring_layout(G, k=4, iterations=500)
+    pos = nx.spring_layout(G, k=3, iterations=4000)
     draw_unweighted(G, pos, node_color, edge_color, linewidths, border_color)
     draw_degree(G, pos, node_color, edge_color, linewidths, border_color, degree, largest_node, song_info)
     draw_degree_centrality(G, pos, node_color, edge_color, linewidths, border_color, degree_centrality, song_info)
@@ -180,7 +192,7 @@ def draw_degree(G, pos, node_color, edge_color, linewidths, border_color, degree
 
 # Draw weighted graph by degree centrality
 def draw_degree_centrality(G, pos, node_color, edge_color, linewidths, border_color, degree_centrality, song_info):
-    node_size = [(degree_centrality[node] * 400 + 20) for node in G.nodes()]
+    node_size = [(((degree_centrality[node])* 60) ** 3 + 20) for node in G.nodes()]
     labels = {}
     max_degree_centrality = max(degree_centrality, key=degree_centrality.get)
     labels[max_degree_centrality] = song_info[max_degree_centrality]['song_name']
@@ -193,7 +205,7 @@ def draw_degree_centrality(G, pos, node_color, edge_color, linewidths, border_co
 
 # Draw weighted graph by betweenness centrality
 def draw_betweenness_centrality(G, pos, node_color, edge_color, linewidths, border_color, betweenness_centrality, song_info):
-    node_size = [(betweenness_centrality[node] * 400 + 20) for node in G.nodes()]
+    node_size = [(((betweenness_centrality[node] + 0.0001)* 200) ** 2 + 20) for node in G.nodes()]
     labels = {}
     max_betweenness_centrality = max(betweenness_centrality, key=betweenness_centrality.get)
     labels[max_betweenness_centrality] = song_info[max_betweenness_centrality]['song_name']
@@ -206,7 +218,7 @@ def draw_betweenness_centrality(G, pos, node_color, edge_color, linewidths, bord
 
 # Draw weighted graph by closeness centrality
 def draw_closeness_centrality(G, pos, node_color, edge_color, linewidths, border_color, closeness_centrality, song_info):
-    node_size = [(closeness_centrality[node] * 400 + 20) for node in G.nodes()]
+    node_size = [((closeness_centrality[node] * 12) ** 4) for node in G.nodes()]
     labels = {}
     max_closeness_centrality = max(closeness_centrality, key=closeness_centrality.get)
     labels[max_closeness_centrality] = song_info[max_closeness_centrality]['song_name']
@@ -219,7 +231,7 @@ def draw_closeness_centrality(G, pos, node_color, edge_color, linewidths, border
 
 # Draw weighted graph by eigenvector centrality
 def draw_eigenvector_centrality(G, pos, node_color, edge_color, linewidths, border_color, eigenvector_centrality, song_info):
-    node_size = [(eigenvector_centrality[node] * 400 + 20) for node in G.nodes()]
+    node_size = [((eigenvector_centrality[node] * 1200) ** 1.2 + 60) for node in G.nodes()]
     labels = {}
     max_eigenvector_centrality = max(eigenvector_centrality, key=eigenvector_centrality.get)
     labels[max_eigenvector_centrality] = song_info[max_eigenvector_centrality]['song_name']
