@@ -121,28 +121,22 @@ def main():
     print("Average path length:", avg_path_length) 
     print("---")
 
-
-
-
-    # uncomment to scale by size of degree
-    # node_sizes = [(degree[node] * 4 + 20) for node in G.nodes()]
-    node_sizes = 200
-    
+    # Draw the network
     node_color = 'darkred'
+    border_color = 'black'
     edge_color = 'gray'
-
+    linewidths = 0.5
     labels = {}
     largest_node = max(degree, key=degree.get)
     labels[largest_node] = song_info[largest_node]['song_name']
 
-    # Draw the graph with scaled node sizes
     pos = nx.spring_layout(G, k=4, iterations=500)
-    nx.draw_networkx_nodes(G, pos, node_color=node_color, node_size=node_sizes, edgecolors='black', linewidths=0.5)
-    nx.draw_networkx_edges(G, pos, edge_color=edge_color, alpha=0.5)
-    nx.draw_networkx_labels(G, pos, labels, font_size=3, font_weight='bold')
-
-    # Draw the graph
-    plt.show()
+    draw_unweighted(G, pos, node_color, edge_color, linewidths, border_color)
+    draw_degree(G, pos, node_color, edge_color, linewidths, border_color, degree, largest_node, song_info)
+    draw_degree_centrality(G, pos, node_color, edge_color, linewidths, border_color, degree_centrality, song_info)
+    draw_betweenness_centrality(G, pos, node_color, edge_color, linewidths, border_color, betweenness_centrality, song_info)
+    draw_closeness_centrality(G, pos, node_color, edge_color, linewidths, border_color, closeness_centrality, song_info)
+    draw_eigenvector_centrality(G, pos, node_color, edge_color, linewidths, border_color, eigenvector_centrality, song_info)
 
 # Function to calculate the maximum of a dictionary
 def max_metric(metric):
@@ -164,8 +158,79 @@ def median_metric(metric):
         return (sorted_metric[n//2] + sorted_metric[n//2 - 1]) / 2
     return sorted_metric[n//2]
 
-main()
+# Draw unweighted graph
+def draw_unweighted(G, pos, node_color, edge_color, linewidths, border_color):
+    node_size = 200
+    nx.draw_networkx_nodes(G, pos, node_color=node_color, node_size=node_size, edgecolors=border_color , linewidths=linewidths)
+    nx.draw_networkx_edges(G, pos, edge_color=edge_color, alpha=0.5)
+    plt.title("Unweighted") 
+    plt.show()
 
+# Draw weighted graph by degree
+def draw_degree(G, pos, node_color, edge_color, linewidths, border_color, degree, max_degree, song_info):
+    node_size = [(degree[node] * 4 + 20) for node in G.nodes()]
+    labels = {}
+    labels[max_degree] = song_info[max_degree]['song_name']
+
+    nx.draw_networkx_nodes(G, pos, node_color=node_color, node_size=node_size, edgecolors=border_color, linewidths=linewidths)
+    nx.draw_networkx_edges(G, pos, edge_color=edge_color, alpha=0.5)
+    nx.draw_networkx_labels(G, pos, labels, font_size=3, font_weight='bold')
+    plt.title("Degree")
+    plt.show()
+
+# Draw weighted graph by degree centrality
+def draw_degree_centrality(G, pos, node_color, edge_color, linewidths, border_color, degree_centrality, song_info):
+    node_size = [(degree_centrality[node] * 400 + 20) for node in G.nodes()]
+    labels = {}
+    max_degree_centrality = max(degree_centrality, key=degree_centrality.get)
+    labels[max_degree_centrality] = song_info[max_degree_centrality]['song_name']
+
+    nx.draw_networkx_nodes(G, pos, node_color=node_color, node_size=node_size, edgecolors=border_color, linewidths=linewidths)
+    nx.draw_networkx_edges(G, pos, edge_color=edge_color, alpha=0.5)
+    nx.draw_networkx_labels(G, pos, labels, font_size=3, font_weight='bold')
+    plt.title("Degree Centrality")
+    plt.show()
+
+# Draw weighted graph by betweenness centrality
+def draw_betweenness_centrality(G, pos, node_color, edge_color, linewidths, border_color, betweenness_centrality, song_info):
+    node_size = [(betweenness_centrality[node] * 400 + 20) for node in G.nodes()]
+    labels = {}
+    max_betweenness_centrality = max(betweenness_centrality, key=betweenness_centrality.get)
+    labels[max_betweenness_centrality] = song_info[max_betweenness_centrality]['song_name']
+
+    nx.draw_networkx_nodes(G, pos, node_color=node_color, node_size=node_size, edgecolors=border_color, linewidths=linewidths)
+    nx.draw_networkx_edges(G, pos, edge_color=edge_color, alpha=0.5)
+    nx.draw_networkx_labels(G, pos, labels, font_size=3, font_weight='bold')
+    plt.title("Betweenness Centrality")
+    plt.show()
+
+# Draw weighted graph by closeness centrality
+def draw_closeness_centrality(G, pos, node_color, edge_color, linewidths, border_color, closeness_centrality, song_info):
+    node_size = [(closeness_centrality[node] * 400 + 20) for node in G.nodes()]
+    labels = {}
+    max_closeness_centrality = max(closeness_centrality, key=closeness_centrality.get)
+    labels[max_closeness_centrality] = song_info[max_closeness_centrality]['song_name']
+
+    nx.draw_networkx_nodes(G, pos, node_color=node_color, node_size=node_size, edgecolors=border_color, linewidths=linewidths)
+    nx.draw_networkx_edges(G, pos, edge_color=edge_color, alpha=0.5)
+    nx.draw_networkx_labels(G, pos, labels, font_size=3, font_weight='bold')
+    plt.title("Closeness Centrality")
+    plt.show()
+
+# Draw weighted graph by eigenvector centrality
+def draw_eigenvector_centrality(G, pos, node_color, edge_color, linewidths, border_color, eigenvector_centrality, song_info):
+    node_size = [(eigenvector_centrality[node] * 400 + 20) for node in G.nodes()]
+    labels = {}
+    max_eigenvector_centrality = max(eigenvector_centrality, key=eigenvector_centrality.get)
+    labels[max_eigenvector_centrality] = song_info[max_eigenvector_centrality]['song_name']
+
+    nx.draw_networkx_nodes(G, pos, node_color=node_color, node_size=node_size, edgecolors=border_color, linewidths=linewidths)
+    nx.draw_networkx_edges(G, pos, edge_color=edge_color, alpha=0.5)
+    nx.draw_networkx_labels(G, pos, labels, font_size=3, font_weight='bold')
+    plt.title("Eigenvector Centrality")
+    plt.show()
+
+main()
 
 
 
