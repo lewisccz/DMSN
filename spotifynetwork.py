@@ -26,13 +26,13 @@ def main():
             song_id = row['song_id']
             song_info[song_id] = row
 
-
-    # Validate dataset
-    num_nodes = G.number_of_nodes()
-    num_edges = G.number_of_edges()
-
-    print(f"Number of nodes: {num_nodes}")
-    print(f"Number of edges: {num_edges}")
+    # Add the 'energy' audio feature to each song
+    for song_id in song_info:
+        audio_features = sp.audio_features(song_id)[0]
+        if audio_features:
+            song_info[song_id]['energy'] = audio_features['energy']
+        else:
+            song_info[song_id]['energy'] = None
 
     # Compute metrics
     degree = dict(G.degree())
@@ -93,6 +93,7 @@ def main():
         print(f"Artist URI: {song_data['artist_uri']}")
         print(f"Album Name: {song_data['album_name']}")
         print(f"Album URI: {song_data['album_uri']}")
+        print("Energy:", song_data['energy'])
         print(f"Degree: {degree[node]}")
         print(f"Degree Centrality: {degree_centrality[node]}")
         print(f"Betweenness Centrality: {betweenness_centrality[node]}")
@@ -141,25 +142,7 @@ def main():
     print("Average path length:", avg_path_length) 
     print("---")
 
-    # Draw the network
-
-    genre_colors = {
-        'Pop': 'red',
-        'Rock': 'blue',
-        'Hip Hop': 'green',
-        'Electronic': 'orange',
-        'Country': 'purple',
-        # Add more genres and colors as needed
-    }
-
-    # Create a list to store the color of each node based on its genre
-    '''
-    for node in G.nodes():
-        song_data = song_info[node]
-        genre = song_data['genre']  # Assuming the genre information is stored in the 'genre' column of the CSV file
-        color = genre_colors.get(genre, 'gray')  # Assign gray color if the genre is not found in the dictionary
-        node_colors.append(color)'''
-    
+    # Draw the network    
     node_colors = 'darkred'
     border_color = 'black'
     edge_color = 'gray'
