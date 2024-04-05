@@ -2,8 +2,16 @@ import pickle
 import networkx as nx 
 import matplotlib.pyplot as plt
 import csv
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 
 def main():
+    client_id = '736dd37c127e4fe698338b94359c87b1'
+    client_secret = 'e2f427be0bae4ae6aef0e5945d871dfc'
+
+    client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
+    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
     pickle_file_path = 'small_graph.pickle'
 
     # Open the .pickle file and load its contents
@@ -134,7 +142,25 @@ def main():
     print("---")
 
     # Draw the network
-    node_color = 'darkred'
+
+    genre_colors = {
+        'Pop': 'red',
+        'Rock': 'blue',
+        'Hip Hop': 'green',
+        'Electronic': 'orange',
+        'Country': 'purple',
+        # Add more genres and colors as needed
+    }
+
+    # Create a list to store the color of each node based on its genre
+    '''
+    for node in G.nodes():
+        song_data = song_info[node]
+        genre = song_data['genre']  # Assuming the genre information is stored in the 'genre' column of the CSV file
+        color = genre_colors.get(genre, 'gray')  # Assign gray color if the genre is not found in the dictionary
+        node_colors.append(color)'''
+    
+    node_colors = 'darkred'
     border_color = 'black'
     edge_color = 'gray'
     linewidths = 0.5
@@ -142,13 +168,13 @@ def main():
     largest_node = max(degree, key=degree.get)
     labels[largest_node] = song_info[largest_node]['song_name']
 
-    pos = nx.spring_layout(G, k=3, iterations=4000)
-    draw_unweighted(G, pos, node_color, edge_color, linewidths, border_color)
-    draw_degree(G, pos, node_color, edge_color, linewidths, border_color, degree, largest_node, song_info)
-    draw_degree_centrality(G, pos, node_color, edge_color, linewidths, border_color, degree_centrality, song_info)
-    draw_betweenness_centrality(G, pos, node_color, edge_color, linewidths, border_color, betweenness_centrality, song_info)
-    draw_closeness_centrality(G, pos, node_color, edge_color, linewidths, border_color, closeness_centrality, song_info)
-    draw_eigenvector_centrality(G, pos, node_color, edge_color, linewidths, border_color, eigenvector_centrality, song_info)
+    pos = nx.spring_layout(G, k=3, iterations=300)
+    draw_unweighted(G, pos, node_colors, edge_color, linewidths, border_color)
+    #draw_degree(G, pos, node_colors, edge_color, linewidths, border_color, degree, largest_node, song_info)
+    #draw_degree_centrality(G, pos, node_colors, edge_color, linewidths, border_color, degree_centrality, song_info)
+    #draw_betweenness_centrality(G, pos, node_colors, edge_color, linewidths, border_color, betweenness_centrality, song_info)
+    #draw_closeness_centrality(G, pos, node_colors, edge_color, linewidths, border_color, closeness_centrality, song_info)
+    #draw_eigenvector_centrality(G, pos, node_colors, edge_color, linewidths, border_color, eigenvector_centrality, song_info)
 
 # Function to calculate the maximum of a dictionary
 def max_metric(metric):
